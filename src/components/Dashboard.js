@@ -32,7 +32,7 @@ export default function Dashboard() {
     fetchMyHabits()
   }, [])
 
-    // 2. Add a new habit safely
+      // 2. Add a new habit safely
   async function handleAddHabit(e) {
     e.preventDefault()
     if (!newHabit.trim()) return
@@ -45,7 +45,7 @@ export default function Dashboard() {
     if (error) {
       console.error('Database Error adding habit:', error)
     } else if (data && data.length > 0) {
-      // FIX: Added [0] index accessor to extract fields correctly from the database array
+      // FIX: Added index [0] to correctly extract fields from the array response
       const savedHabit = {
         id: data[0].id, 
         name: data[0].name,
