@@ -60,18 +60,19 @@ export default function Dashboard() {
   }
 
 
-  // 3. Delete a habit safely
-  async function handleDeleteHabit(habitId) {
+    // 3. Delete a habit safely
+  async function handleDeleteHabit(habitId, habitName) {
+    // 1. Instantly remove it from the screen layout so the user sees it vanish
+    setHabits(prevHabits => prevHabits.filter(habit => habit.id !== habitId))
+
+    // 2. Fire off the delete command to Supabase using the unique habit name as a fallback check
     const { error } = await supabase
       .from('habits')
       .delete()
-      .eq('id', habitId)
+      .or(`id.eq.${habitId},name.eq.${habitName}`)
 
     if (error) {
       console.error('Database Error deleting habit:', error)
-    } else {
-      // Filter out the deleted item instantly from the screen state
-      setHabits(habits.filter(habit => habit.id !== habitId))
     }
   }
 
@@ -110,7 +111,8 @@ export default function Dashboard() {
               <div className="flex items-center gap-3">
                 {/* Delete Button */}
                 <button 
-                  onClick={() => handleDeleteHabit(habit.id)}
+                  onClick={() => handleDeleteHabit(habit.id, habit.name)}
+
                   className="text-gray-400 hover:text-red-500 transition text-sm p-1"
                   title="Delete habit"
                 >
