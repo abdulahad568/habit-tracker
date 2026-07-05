@@ -32,7 +32,7 @@ export default function Dashboard() {
     fetchMyHabits()
   }, [])
 
-        // 2. Add a new habit safely
+          // 2. Add a new habit safely
   async function handleAddHabit(e) {
     e.preventDefault()
     if (!newHabit.trim()) return
@@ -45,7 +45,7 @@ export default function Dashboard() {
     if (error) {
       console.error('Database Error adding habit:', error)
     } else if (data && data.length > 0) {
-      // Corrected: Uses bracket notation 0 to grab the first item from the array
+      // GRAB FIRST ITEM FROM ARRAY: Explicitly extracting index 0 
       const insertedItem = data[0]
       
       const savedHabit = {
@@ -57,6 +57,7 @@ export default function Dashboard() {
       setNewHabit('')
     }
   }
+
 
   // 3. Delete a habit safely
   async function handleDeleteHabit(habitId) {
