@@ -32,29 +32,30 @@ export default function Dashboard() {
     fetchMyHabits()
   }, [])
 
-          // 2. Add a new habit safely
+            // 2. Add a new habit safely
   async function handleAddHabit(e) {
     e.preventDefault()
     if (!newHabit.trim()) return
 
-    const { data, error } = await supabase
+    // Create an immediate local preview object
+    const clientSideHabit = {
+      id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(),
+      name: newHabit,
+      completedToday: false
+    }
+
+    // Instantly force the screen list to show it without waiting for database roundtrips
+    setHabits(prevHabits => [...prevHabits, clientSideHabit])
+    const currentInputText = newHabit
+    setNewHabit('')
+
+    // Safely fire off the network log sync in the background
+    const { error } = await supabase
       .from('habits')
-      .insert([{ name: newHabit }])
-      .select()
+      .insert([{ name: currentInputText }])
 
     if (error) {
-      console.error('Database Error adding habit:', error)
-    } else if (data && data.length > 0) {
-      // GRAB FIRST ITEM FROM ARRAY: Explicitly extracting index 0 
-      const insertedItem = data[0]
-      
-      const savedHabit = {
-        id: insertedItem.id, 
-        name: insertedItem.name,
-        completedToday: false
-      }
-      setHabits([...habits, savedHabit])
-      setNewHabit('')
+      console.error('Background Sync Error:', error)
     }
   }
 
